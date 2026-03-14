@@ -22,6 +22,7 @@ RUN pacman -Syu --noconfirm && \
     git \
     curl \
     tmux \
+    wget \
     xdg-utils \
     mesa \
     vulkan-dzn \
