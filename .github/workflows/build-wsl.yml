@@ -1,0 +1,64 @@
+name: Build WSL image
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+  workflow_dispatch:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+
+env:
+  IMAGE_NAME: archlinux
+  CONTAINER_NAME: archlinux
+  OUTPUT_NAME: archlinux.wsl
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Create dist directory
+        run: mkdir -p dist
+
+      - name: Build Docker image
+        run: docker build -t "${IMAGE_NAME}" .
+
+      - name: Remove old container if present
+        run: |
+          if docker ps -a --format '{{.Names}}' | grep -Fxq "${CONTAINER_NAME}"; then
+            docker rm -f "${CONTAINER_NAME}"
+          fi
+
+      - name: Create container
+        run: docker create --name "${CONTAINER_NAME}" "${IMAGE_NAME}"
+
+      - name: Export rootfs as .wsl
+        run: docker export "${CONTAINER_NAME}" -o "dist/${OUTPUT_NAME}"
+
+      - name: Clean up container
+        if: always()
+        run: docker rm -f "${CONTAINER_NAME}" || true
+
+      - name: Upload .wsl artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: archlinux-wsl
+          path: dist/${{ env.OUTPUT_NAME }}
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload release asset
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/${{ env.OUTPUT_NAME }}
