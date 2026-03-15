@@ -35,15 +35,12 @@ WSL can install such archives directly.
 
 ---
 
-# Requirements
+# Runtime Requirements
 
 You need the following tools installed on Windows:
 
-- **Docker**
 - **WSL**
 - **PowerShell**
-
-WSL does **not** need to be fully configured beforehand, since the build process runs entirely through Docker.
 
 ---
 
@@ -111,6 +108,18 @@ If the agent is configured correctly, the loaded keys from Windows will appear i
 For more details about managing SSH keys on Windows, see the Microsoft documentation:
 
 https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement
+
+---
+
+# Build Requirements
+
+You need the following tools installed on Windows:
+
+- **Docker**
+- **WSL**
+- **PowerShell**
+
+WSL does **not** need to be fully configured beforehand, since the build process runs entirely through Docker.
 
 ---
 
