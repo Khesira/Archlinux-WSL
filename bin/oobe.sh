@@ -135,6 +135,7 @@ if [ -f /usr/share/fzf/completion.bash ]; then
     . /usr/share/fzf/completion.bash
 fi
 
+# WSL2 SSH Agent
 if [ -x /usr/bin/wsl2-ssh-agent ]; then
     eval "$(/usr/bin/wsl2-ssh-agent)"
 fi
