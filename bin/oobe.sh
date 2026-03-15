@@ -48,7 +48,7 @@ prompt_locale() {
 
 enable_locale() {
     local locale_name="$1"
-    sed -i -E "s|^[[:space:]]*#?[[:space:]]*(${user_locale}\.UTF-8[[:space:]]+UTF-8)[[:space:]]*$|\1|" /etc/locale.gen
+    sed -i -E "s|^[[:space:]]*#?[[:space:]]*(${locale_name}\.UTF-8[[:space:]]+UTF-8)[[:space:]]*$|\1|" /etc/locale.gen
 }
 
 language_locale="$(prompt_locale 'Enter UI language locale (e.g. en_US, de_DE)' 'en_US')"
