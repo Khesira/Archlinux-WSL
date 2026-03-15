@@ -60,6 +60,7 @@ RUN pacman -Syu --noconfirm && \
     '[boot]' \
     'systemd=true' \
     > /etc/wsl.conf && \
+  sed -i '/^[[:space:]]*NoExtract[[:space:]]*=/d' /etc/pacman.conf && \
   systemctl mask systemd-firstboot.service && \
   systemctl mask systemd-resolved.service && \
   systemctl mask systemd-networkd.service && \
