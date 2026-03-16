@@ -25,9 +25,87 @@ You need the following tools installed on Windows:
 
 # Quick install
 
-If you only want to install the prepared distribution without building it yourself, download the archlinux.wsl file from the latest release and execute it
+If you only want to install the prepared distribution without building it yourself, download the archlinux.wsl file  
+from the latest release and execute it or run the following command:
+
+```powershell
+wsl --install --from-file dist\archlinux.wsl
+```
 
 After installation, WSL automatically launches the distribution and starts the OOBE setup.
+
+---
+
+# First Boot (OOBE)
+
+The distribution uses the WSL **Out-Of-Box Experience (OOBE)** mechanism.
+
+Configuration file:
+
+```
+/etc/wsl-distribution.conf
+```
+
+Example:
+
+```ini
+[oobe]
+command=/usr/lib/wsl/oobe.sh
+defaultUid=1000
+```
+
+OOBE Script:
+
+```
+/usr/lib/wsl/oobe.sh
+```
+
+Responsibilities:
+
+- Ask for the user locale
+- Create sudo access and the first user
+- Set the user as default user in ```/etc/wsl.conf```
+- Create an SSH key
+- Write a basic .bashrc file
+- Ask to download optional dotfiles
+
+The script is executed **only once**.
+
+After this process completes, the configuration:
+
+```
+defaultUid=1000
+```
+
+instructs WSL to automatically start the user created during OOBE and the distribution behaves like a normal Linux system.
+
+---
+
+# Optional dotfiles
+
+During OOBE runs you will be asked to download additional extended configuration.  
+Proceeding with yes will download the following files:
+
+## vimrc
+
+It just contains some basic vim settings. Kindly feel free to adjust it to your needs or delete it if you prefer to have the default settings or you are not using vim at all.
+
+## bash_aliases
+
+Since aliases are a very individual thing, the purpose of this file is not to provide you with a best practice bash_aliases file.
+
+It contains a small set of aliases which you might or might not like. In any case, kindly feel free to change and/or extend it to your own likes.
+
+## local_bashrc
+
+This file is sourced by the bashrc which has been written during OOBE.  
+In its current state it contains a custom prompt showing additional information:
+
+- Return code of the last command
+- Who you are and where
+- The active Python venv (only visible if one is active)
+- The current working directory
+- The active git branch in case you are within a git repository
 
 ---
 
@@ -102,6 +180,23 @@ WSL does **not** need to be fully configured beforehand, since the build process
 
 ---
 
+# Project structure
+
+```
+.
+├── Dockerfile
+├── build.ps1
+├── README.md
+├── bin/
+│   └── oobe.sh
+├── icon/
+│   └── archlinux.png
+└── dist/
+    └── archlinux.wsl
+```
+
+---
+
 # How it works
 
 The build pipeline looks like this:
@@ -131,6 +226,8 @@ Run the PowerShell build script:
 .\build.ps1
 ```
 
+If an existing distribution with the same name exists, the script will ask whether it should be removed.
+
 The script will:
 
 1. Build the Docker image
@@ -154,90 +251,6 @@ This file can be distributed and installed on other machines.
 
 ---
 
-# Installing the distribution manually
-
-If you already have the `.wsl` file, install it with:
-
-```powershell
-wsl --install --from-file dist\archlinux.wsl --name Archlinux
-```
-
-After installation, WSL automatically launches the distribution.
-
----
-
-# First Boot (OOBE)
-
-The distribution uses the WSL **Out-Of-Box Experience (OOBE)** mechanism.
-
-Configuration file:
-
-```
-/etc/wsl-distribution.conf
-```
-
-Example:
-
-```ini
-[oobe]
-command=/usr/lib/wsl/oobe.sh
-defaultUid=1000
-```
-
-During the first startup:
-
-1. `oobe.sh` is executed
-2. The script prompts for a username
-3. The user account is created
-4. WSL sets the default user
-
-After this process completes, the distribution behaves like a normal Linux system.
-
----
-
-# OOBE script
-
-Location:
-
-```
-/usr/lib/wsl/oobe.sh
-```
-
-Typical responsibilities:
-
-- create the first user
-- configure sudo access
-- configure shell environment
-- optional setup tasks
-
-Example logic:
-
-```
-prompt for username
-create user
-set password
-configure environment
-exit
-```
-
-The script is executed **only once**.
-
----
-
-# Restart behavior
-
-The OOBE script should **not attempt to restart WSL itself**.
-
-Instead, the configuration uses:
-
-```
-defaultUid=1000
-```
-
-which instructs WSL to automatically start the user created during OOBE.
-
----
-
 # Docker build
 
 The distribution filesystem is defined in the `Dockerfile`.
@@ -250,61 +263,6 @@ Example responsibilities:
 - configure WSL integration
 
 The Docker image itself is **not used as a runtime container** — it only serves as a build environment for the root filesystem.
-
----
-
-# Project structure
-
-```
-.
-├── Dockerfile
-├── build.ps1
-├── README.md
-├── bin/
-│   └── oobe.sh
-├── icon/
-│   └── archlinux.png
-└── dist/
-    └── archlinux.wsl
-```
-
----
-
-# Key design decisions
-
-## Docker for reproducible builds
-
-Using Docker ensures:
-
-- deterministic builds
-- isolated package installation
-- reproducible root filesystem
-
----
-
-## `.wsl` instead of `.tar`
-
-WSL can install distributions directly from `.wsl` packages.
-
-Internally they are simply tar archives containing the root filesystem.
-
----
-
-## OOBE instead of manual setup
-
-Using `wsl-distribution.conf` allows a clean first-run setup without requiring the user to manually execute initialization scripts.
-
----
-
-# Development
-
-Rebuild the distribution with:
-
-```powershell
-.\build.ps1
-```
-
-If an existing distribution with the same name exists, the script will ask whether it should be removed.
 
 ---
 

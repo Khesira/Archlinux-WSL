@@ -64,6 +64,11 @@ if ! getent group wheel >/dev/null; then
   groupadd wheel
 fi
 
+cat > /etc/sudoers.d/wheel <<'EOF'
+%wheel ALL=(ALL:ALL) ALL
+EOF
+chmod 440 /etc/sudoers.d/wheel
+
 while true; do
     read -rp "Enter your username: " username
 
@@ -84,11 +89,6 @@ useradd -m -s /bin/bash -G wheel "$username"
 passwd "$username"
 
 printf '\n[user]\ndefault=%s\n' "$username" >> /etc/wsl.conf
-
-cat > /etc/sudoers.d/wheel <<'EOF'
-%wheel ALL=(ALL:ALL) ALL
-EOF
-chmod 440 /etc/sudoers.d/wheel
 
 install -d -m 700 -o "$username" -g "$username" "/home/$username/.ssh"
 
