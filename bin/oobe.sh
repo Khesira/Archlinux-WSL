@@ -158,6 +158,8 @@ EOF
 
 chown "$username:$username" "/home/$username/.bashrc"
 
+git config --global core.sshCommand "ssh -o IdentityAgent=/home/$username/.ssh/wsl2-ssh-agent.sock"
+
 read -rp "Download extended bash configs from https://github.com/BluntlyCat/dotfiles? [y/N]: " enable_custom
 
 download_dotfile() {
