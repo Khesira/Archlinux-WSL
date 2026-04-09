@@ -42,9 +42,19 @@ To enable IPv6 connectivity in WSL, you need to change the networking mode to ``
 To do so create the file .wslconfig directly within this folder and paste the content below.  
 Your Windows user folder is usually located at C:\Users\<YOUR_USERNAME>  
 
-```.wslconfig
+```
 [wsl2]
 networkingMode=Mirrored
+```
+
+Once the .wslconfig file has been created, you need to shut down WSL from the Windows CMD or the PowerShell.
+```
+wsl --shutdown
+```
+
+After WSL has been shutdown, you can re-open your WSL image and IPv6 should be enabled. Please test it with the following command:
+```bash
+ping -6 google.de
 ```
 
 ---
