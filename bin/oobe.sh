@@ -160,7 +160,7 @@ chown "$username:$username" "/home/$username/.bashrc"
 
 git config --global core.sshCommand "ssh -o IdentityAgent=/home/$username/.ssh/wsl2-ssh-agent.sock"
 
-read -rp "Download extended bash configs from https://github.com/BluntlyCat/dotfiles? [y/N]: " enable_custom
+read -rp "Download extended bash configs from https://github.com/Khesira/dotfiles? [y/N]: " enable_custom
 
 download_dotfile() {
     local base_url="$1"
@@ -179,7 +179,7 @@ download_dotfile() {
 }
 
 if [[ "$enable_custom" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-    dotfile_url="https://raw.githubusercontent.com/BluntlyCat/dotfiles/main"
+    dotfile_url="https://raw.githubusercontent.com/Khesira/dotfiles/main"
 
     download_dotfile "$dotfile_url" "bash_aliases"
     download_dotfile "$dotfile_url" "local.bashrc"
